@@ -65,7 +65,7 @@ export function buildReport(events, sourceLabel) {
   return `
   <div class="rp">
     <header class="rp-head">
-      <div><div class="rp-brand">Tax<span>Tape</span></div><div class="rp-sub">Cryptoasset capital gains and income computation</div></div>
+      <div><div class="rp-brand">tax<span>tape</span></div><div class="rp-sub">Cryptoasset capital gains and income computation</div></div>
       <div class="rp-meta">Source: ${esc(sourceLabel || 'wallet')}<br>Generated ${esc(generated)}<br>${events.length} events · ${disposals.length} disposals · ${reviewCount} items marked for review</div>
     </header>
     <p class="rp-basis"><strong>Basis of preparation.</strong> Disposals matched under HMRC's cryptoasset rules (CRYPTO22200 onwards): same-day acquisitions first, then acquisitions within the following 30 days, then the Section 104 pooled average cost. Crypto-to-crypto swaps are disposals at sterling market value. Transaction fees on disposal are allowable costs; fees on acquisition are added to cost. Income is valued in sterling on the day of receipt and forms the cost basis of the asset received. Sterling values use daily closing prices (Coinbase ETH-GBP / BTC-GBP; ECB USD-GBP for USD stablecoins), applied consistently. Items marked ⚠ are classifications the preparer should confirm.</p>
@@ -74,7 +74,7 @@ export function buildReport(events, sourceLabel) {
       <h3>Closing Section 104 pools (carried forward)</h3>
       <table class="rp-disposals"><thead><tr><th>Asset</th><th class="r">Quantity held</th><th class="r">Pooled cost</th><th class="r">Average cost per unit</th></tr></thead><tbody>${poolRows || '<tr><td colspan="4">Nothing carried forward.</td></tr>'}</tbody></table>
     </section>
-    <footer class="rp-foot">This computation is generated mechanically from public ledger data and user classifications. It is not tax advice and does not include activity on exchanges or wallets not provided. Check with an accountant before filing. TaxTape, rowbo.ai.</footer>
+    <footer class="rp-foot">This computation is generated mechanically from public ledger data and user classifications. It is not tax advice and does not include activity on exchanges or wallets not provided. Check with an accountant before filing. taxtape, rowbo.ai.</footer>
   </div>`;
 }
 
