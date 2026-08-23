@@ -22,7 +22,7 @@ nav.top .meta { display: flex; gap: 18px; align-items: center; font-family: var(
 nav.top .live i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 4px rgba(74,222,128,.15); margin-right: 8px; vertical-align: 1px; }
 
 /* hero with ascii canvas */
-.hero { position: relative; margin-top: 0; padding: 120px 0 90px; min-height: 88vh; display: flex; align-items: center; overflow: hidden; isolation: isolate; }
+.hero { position: relative; margin-top: 0; padding: 0; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; overflow: hidden; isolation: isolate; }
 .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; z-index: 0; filter: invert(1) hue-rotate(-12deg) saturate(1.7) contrast(1.15) brightness(.9); opacity: .9; }
 .hero-fade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse 52% 58% at 50% 48%, rgba(8,4,15,.72), rgba(8,4,15,.1) 100%), linear-gradient(180deg, rgba(8,4,15,.3) 0%, rgba(8,4,15,0) 20%, rgba(8,4,15,0) 70%, var(--bg) 100%); }
 .hero-inner { text-align: center; width: 100%; }
@@ -62,7 +62,14 @@ button:disabled { opacity: .55; cursor: wait; transform: none; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .reveal { animation: none; opacity: 1; transform: none; } }
 
-/* bento (adapted from 21st.dev kokonutd Bento Grid) */
+/* plain info text */
+.info { margin-top: 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px 48px; }
+.info-block h3 { font-family: var(--display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 8px; }
+.info-block p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.65; }
+.how { margin-top: 64px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px 48px; }
+.how h2 { grid-column: 1 / -1; margin: 0; }
+
+/* bento (unused, kept for reference) */
 .bento-wrap { margin-top: 8px; }
 .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .bento-item { position: relative; padding: 18px; border-radius: 14px; border: 1px solid var(--line); background: rgba(14,8,24,.75); overflow: hidden; transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; will-change: transform; }

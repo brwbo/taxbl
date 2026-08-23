@@ -26,42 +26,30 @@
 </section>
 
 <div class="wrap">
-  <section class="bento-wrap" id="bento">
-    <div class="bento">
-      <article class="bento-item span2 persist">
-        <div class="bi-top"><span class="bi-icon">◉</span><span class="bi-status live">Live since 1 Jan 2026</span></div>
-        <h3>HMRC is already collecting <span class="bi-meta">CARF</span></h3>
-        <p>UK exchanges and custodial wallets record every user's sales, swaps and transfers to private wallets, and file them to HMRC between January and May 2027. HMRC matches that against Self Assessment and writes to the people who never filed.</p>
-        <div class="bi-tags"><span>#CARF</span><span>#SelfAssessment</span><span>#2027</span></div>
-      </article>
-      <article class="bento-item">
-        <div class="bi-top"><span class="bi-icon">⟁</span><span class="bi-status">The gap</span></div>
-        <h3>The exchange file is partial</h3>
-        <p>It shows what the exchange saw. What happened after the coins left, swaps, staking, airdrops, moves to a hardware wallet, is on the public ledger. That is what you reconcile.</p>
-        <div class="bi-tags"><span>#onchain</span><span>#DeFi</span></div>
-      </article>
-      <article class="bento-item">
-        <div class="bi-top"><span class="bi-icon">§</span><span class="bi-status">Rules</span></div>
-        <h3>HMRC's own matching <span class="bi-meta">CRYPTO22200</span></h3>
-        <p>Same-day first, then purchases in the following 30 days, then the Section 104 pooled average. A crypto-to-crypto swap is a disposal. Staking and airdrops are income on receipt.</p>
-        <div class="bi-tags"><span>#same-day</span><span>#30-day</span><span>#S104</span></div>
-      </article>
-      <article class="bento-item span2">
-        <div class="bi-top"><span class="bi-icon">◌</span><span class="bi-status">Private</span></div>
-        <h3>Nothing leaves your browser <span class="bi-meta">read-only</span></h3>
-        <p>A public address lets anyone see history, not touch it. There is no connect button, no signing, no account. The address goes to a public explorer and nowhere else; we never see it. Every classification is a visible guess you can override.</p>
-        <div class="bi-tags"><span>#no-wallet-connect</span><span>#open-source</span></div>
-      </article>
+  <section class="info" id="bento">
+    <div class="info-block">
+      <h3>hmrc is already collecting</h3>
+      <p>Since 1 January 2026, UK exchanges and custodial wallets record every user's sales, swaps and transfers to private wallets under CARF. They file it to HMRC between January and May 2027. HMRC matches it against Self Assessment and writes to the people who never filed.</p>
+    </div>
+    <div class="info-block">
+      <h3>the exchange file is partial</h3>
+      <p>It shows what the exchange saw. What happened after the coins left, swaps, staking, airdrops, moves to a hardware wallet, is on the public ledger. That is what you will have to reconcile.</p>
+    </div>
+    <div class="info-block">
+      <h3>hmrc's own matching rules</h3>
+      <p>Same-day first, then purchases in the following 30 days, then the Section 104 pooled average (CRYPTO22200). A crypto-to-crypto swap is a disposal. Staking rewards and airdrops are income on the day they arrive.</p>
+    </div>
+    <div class="info-block">
+      <h3>nothing leaves your browser</h3>
+      <p>A public address lets anyone see history, not touch it. No connect button, no signing, no account. The address goes to a public explorer and nowhere else; we never see it. Every classification is a visible guess you can override, and the totals recalculate as you correct them.</p>
     </div>
   </section>
 
   <section class="how">
-    <h2>How to use it</h2>
-    <ol class="steps">
-      <li><b>Paste a public address.</b> The one that starts 0x. Not a seed phrase, not a private key, no wallet connection. If you only use an exchange, try the sample to see what the output looks like.</li>
-      <li><b>Check the guesses.</b> Every event is classified (disposal, acquisition, income, transfer) and every guess is marked ⚠ with the reason. Change any you know to be wrong, such as a transfer to your own hardware wallet. The totals recalculate as you go.</li>
-      <li><b>Read your position per tax year.</b> Proceeds, allowable costs, gains, losses, the £3,000 exempt amount, what is taxable, and income from staking or airdrops. Then open the full report for the computation an accountant can file from.</li>
-    </ol>
+    <h2>how to use it</h2>
+    <div class="info-block"><h3>1. paste a public address</h3><p>The one that starts 0x. Not a seed phrase, not a private key, no wallet connection. If you only use an exchange, try the sample to see the output.</p></div>
+    <div class="info-block"><h3>2. check the guesses</h3><p>Every event is classified and every guess is marked ⚠ with the reason. Change any you know to be wrong, such as a transfer to your own hardware wallet.</p></div>
+    <div class="info-block"><h3>3. read your position per tax year</h3><p>Proceeds, allowable costs, gains, losses, the £3,000 exempt amount, what is taxable, and income from staking or airdrops. Then open the full report.</p></div>
   </section>
 
 
