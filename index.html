@@ -24,10 +24,9 @@
   <canvas id="asciiBg" class="hero-bg" aria-hidden="true"></canvas>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap hero-inner">
-    <div class="badge reveal d2"><b>2027</b> HMRC gets your exchange data between January and May</div>
-    <h1 class="reveal d3">What will HMRC ask you about <em>your crypto</em>?</h1>
-    <p class="lead reveal d4">Paste a public Ethereum address. taxtape reads the chain, classifies every sale, swap, reward and transfer under HMRC's share-pooling rules (same-day, 30-day, Section 104), and shows your gains and income per tax year. Correct any guess and the numbers recalculate live.</p>
-    <div class="panel reveal d5">
+    <h1 class="reveal d2">What will HMRC ask you about <em>your crypto</em>?</h1>
+    <p class="lead reveal d3">taxtape turns a public Ethereum address into a UK tax position: every sale, swap, reward and transfer, matched under HMRC's own rules, totalled per tax year. It exists because most people holding crypto have never declared it, and from 2027 HMRC will know.</p>
+    <div class="panel reveal d4">
       <form id="form">
         <input id="address" type="text" placeholder="0x… public Ethereum address" autocomplete="off" spellcheck="false" aria-label="Public Ethereum address">
         <button id="run" type="submit">Run the tape</button>
@@ -39,11 +38,26 @@
         <div class="mono">Verify it yourself: open DevTools → Network and watch where the address goes.<span id="srcLink"> Source: <a href="https://github.com/brwbo/taxtape" rel="noopener">github.com/brwbo/taxtape</a></span></div>
       </div>
     </div>
-    <div class="proof reveal d5"><span>No account</span><span>No wallet connection</span><span>HMRC CRYPTO22000 rules</span><span>Every guess shown and editable</span></div>
+    <div class="proof reveal d4"><span>No account</span><span>No wallet connection</span><span>HMRC CRYPTO22000 rules</span><span>Every guess shown and editable</span></div>
   </div>
 </section>
 
 <div class="wrap">
+  <section class="why">
+    <div class="why-item"><span class="k">01 · Jan 2026</span><p>UK exchanges and custodial wallets started recording every user's sales, swaps and transfers under the OECD's CARF rules.</p></div>
+    <div class="why-item"><span class="k">02 · Jan–May 2027</span><p>They file that data to HMRC. HMRC matches it against Self Assessment returns and writes to the people who never filed.</p></div>
+    <div class="why-item"><span class="k">03 · The gap</span><p>The exchange file only shows what the exchange saw. What happened after the coins left is on the public ledger, and that is what you will have to reconcile.</p></div>
+  </section>
+
+  <section class="how">
+    <h2>How to use it</h2>
+    <ol class="steps">
+      <li><b>Paste a public address.</b> The one that starts 0x. Not a seed phrase, not a private key, no wallet connection. If you only use an exchange, try the sample to see what the output looks like.</li>
+      <li><b>Check the guesses.</b> Every event is classified (disposal, acquisition, income, transfer) and every guess is marked ⚠ with the reason. Change any you know to be wrong, such as a transfer to your own hardware wallet. The totals recalculate as you go.</li>
+      <li><b>Read your position per tax year.</b> Proceeds, allowable costs, gains, losses, the £3,000 exempt amount, what is taxable, and income from staking or airdrops. Then open the full report for the computation an accountant can file from.</li>
+    </ol>
+  </section>
+
   <div id="results" class="hidden">
     <div class="grid" id="summary"></div>
     <div class="years" id="years"></div>
