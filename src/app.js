@@ -2,6 +2,7 @@ import { fetchLegs, isAddress } from './chain.js';
 import { classify, TYPES, TYPE_LABEL, unpricedAssets } from './classify.js';
 import { computeTax, indicativeCgt } from './engine.js';
 import { SAMPLE_EVENTS } from './sample.js';
+import { buildReport } from './report.js';
 
 const $ = (id) => document.getElementById(id);
 const gbp = (n) => (n == null ? '—' : new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n));
@@ -41,7 +42,9 @@ function render() {
         ${yearList.map((y) => `<li><strong>${y.taxYear}</strong>: ${y.disposals} disposal${y.disposals === 1 ? '' : 's'} worth ${gbp(y.proceeds)}${y.taxableGain > 0 ? `, <span class="bad">${gbp(y.taxableGain)} taxable gain</span> (indicative CGT ${gbp(indicativeCgt(y.taxYear, y.taxableGain).basic)}–${gbp(indicativeCgt(y.taxYear, y.taxableGain).higher)})` : ', <span class="good">within the allowance</span>'}${y.income > 0 ? `, <span class="warn">${gbp(y.income)} income</span>` : ''}${y.proceeds > 50000 && y.taxableGain === 0 ? ' <span class="warn">— proceeds exceed £50,000, so you must still report on Self Assessment even with no tax due</span>' : ''}</li>`).join('')}
         ${source.truncated ? '<li class="warn">History truncated for the demo: only the most recent ~300 transactions and token transfers were read.</li>' : ''}
       </ul>
-    </div>`;
+    </div>
+    <div class="card cta"><div><h3>Full report</h3><p>The Self Assessment computation for every tax year: SA108 figures, a per-disposal audit trail showing which purchases were matched under which rule, income schedule, and closing pools. Printable to PDF.</p></div>
+      <div><button id="openReport" type="button">See the full report</button><span class="price">£29 per tax year when it launches</span></div></div>`;
 
   $('years').innerHTML = yearList.map((y) => {
     const cgt = indicativeCgt(y.taxYear, y.taxableGain);
@@ -144,6 +147,40 @@ $('sample').addEventListener('click', () => {
 $('rows').addEventListener('change', onEdit);
 $('onlyFlagged').addEventListener('change', render);
 $('export').addEventListener('click', exportCsv);
+$('summary').addEventListener('click', (ev) => { if (ev.target.id === 'openReport') openReport(); });
+$('closeReport').addEventListener('click', () => $('reportDlg').close());
+$('printReport').addEventListener('click', () => window.print());
+$('unlockForm').addEventListener('submit', submitInterest);
+
+function openReport() {
+  $('reportBody').innerHTML = buildReport(events, source.label);
+  $('reportDlg').showModal();
+  $('unlockMsg').textContent = ''; $('unlockMsg').className = 'msg';
+}
+
+async function submitInterest(ev) {
+  ev.preventDefault();
+  const { years } = computeTax(events);
+  const ys = Object.values(years);
+  const payload = {
+    email: $('unlockEmail').value.trim(),
+    taxYears: ys.map((y) => y.taxYear).join(','),
+    disposals: ys.reduce((s, y) => s + y.disposals, 0),
+    taxable: ys.reduce((s, y) => s + y.taxableGain, 0),
+    source: source.label === 'sample-wallet' ? 'sample' : 'wallet',
+  };
+  const msg = $('unlockMsg'); const btn = $('unlockBtn');
+  btn.disabled = true; msg.className = 'msg'; msg.textContent = 'Saving…';
+  try {
+    const res = await fetch('/api/interest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    msg.className = 'msg ok'; msg.textContent = 'Got it. You will get the first release free.';
+    $('unlockEmail').value = '';
+  } catch (err) {
+    msg.className = 'msg err'; msg.textContent = err.message || 'Could not save that. Try again.';
+  } finally { btn.disabled = false; }
+}
 
 // Deep link: ?a=0x…
 const qp = new URLSearchParams(location.search).get('a');

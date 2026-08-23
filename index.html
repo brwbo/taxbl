@@ -89,6 +89,54 @@
   .gain.pos { color: var(--good); } .gain.neg { color: var(--bad); }
   tr.flagged td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
 
+
+  .cta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; border-color: #3a2f10; background: linear-gradient(135deg, rgba(255,204,77,.10), rgba(18,24,32,.8)); }
+  .cta h3 { color: var(--accent); }
+  .cta p { margin: 4px 0 0; color: var(--muted); max-width: 60ch; }
+  .cta .price { font-size: 13px; color: var(--muted); margin-left: 10px; }
+  dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 0; width: min(1000px, 94vw); max-height: 92vh; }
+  dialog::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(4px); }
+  .dlg-bar { position: sticky; top: 0; display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--panel-2); border-bottom: 1px solid var(--line); z-index: 2; }
+  .dlg-bar .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dlg-body { padding: 18px 22px 26px; overflow: auto; max-height: calc(92vh - 60px); }
+  .unlock { background: #1a1608; border: 1px solid #3a2f10; border-radius: 12px; padding: 14px 16px; margin: 0 0 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .unlock strong { color: var(--accent); }
+  .unlock input[type=email] { flex: 1 1 240px; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+  .unlock .msg { width: 100%; font-size: 13px; color: var(--muted); }
+  .unlock .msg.ok { color: var(--good); } .unlock .msg.err { color: var(--bad); }
+
+  .rp { font-size: 13.5px; }
+  .rp-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 2px solid var(--line); padding-bottom: 12px; margin-bottom: 12px; }
+  .rp-brand { font-size: 22px; font-weight: 800; } .rp-brand span { color: var(--accent); }
+  .rp-meta { text-align: right; color: var(--muted); font-size: 12.5px; }
+  .rp-basis { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+  .rp-year { margin-top: 22px; page-break-inside: avoid; }
+  .rp-year h2 { font-size: 18px; margin: 0 0 10px; } .rp-year h2 span { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 8px; }
+  .rp-year h3 { font-size: 14px; margin: 16px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .rp-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .rp table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .rp caption { text-align: left; font-weight: 600; padding: 0 0 6px; color: var(--text); }
+  .rp td, .rp th { padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+  .rp th { color: var(--muted); font-weight: 600; font-size: 12px; }
+  .rp .r { text-align: right; font-family: var(--mono); white-space: nowrap; }
+  .rp-summary td:last-child { text-align: right; font-family: var(--mono); }
+  .rp-total td { font-weight: 700; border-top: 2px solid var(--line); }
+  .rp-sub { color: var(--muted); font-size: 12px; }
+  .rp-note { color: var(--muted); font-size: 12px; border-bottom: 0; }
+  .rp-match { font-size: 12px; color: var(--muted); }
+  .rp-flag td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
+  .neg { color: var(--bad); }
+  .rp-foot { margin-top: 22px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+  @media print {
+    body { background: #fff; color: #111; }
+    .bg, .wrap > :not(dialog), .dlg-bar, .unlock { display: none !important; }
+    dialog { position: static; border: 0; width: auto; max-height: none; background: #fff; color: #111; }
+    .dlg-body { max-height: none; overflow: visible; padding: 0; }
+    .rp-brand span { color: #b58a00; } .rp-meta, .rp-basis, .rp-sub, .rp-note, .rp-match, .rp th, .rp-foot, .rp-year h3 { color: #444; }
+    .rp td, .rp th, .rp-total td { border-color: #ccc; }
+    .rp-head { border-color: #999; }
+    .neg { color: #b00020; }
+  }
   footer { margin-top: 40px; color: var(--muted); font-size: 12.5px; max-width: 90ch; }
   footer p { margin: 6px 0; }
 </style>
@@ -137,6 +185,25 @@
       </div>
     </section>
   </div>
+
+  <dialog id="reportDlg">
+    <div class="dlg-bar">
+      <strong>Full report · preview</strong>
+      <div class="actions">
+        <button id="printReport" type="button">Print / save as PDF</button>
+        <button id="closeReport" type="button" class="secondary">Close</button>
+      </div>
+    </div>
+    <div class="dlg-body">
+      <form class="unlock" id="unlockForm">
+        <div style="flex:1 1 100%"><strong>Filing-ready version: £29 per tax year.</strong> Not taking payment yet. Leave your email and you get the first release free, plus a heads-up before the 2027 CARF data lands.</div>
+        <input id="unlockEmail" type="email" placeholder="you@example.com" required autocomplete="email">
+        <button type="submit" id="unlockBtn">Count me in</button>
+        <div class="msg" id="unlockMsg"></div>
+      </form>
+      <div id="reportBody"></div>
+    </div>
+  </dialog>
 
   <footer>
     <p><strong>Not tax advice.</strong> TaxTape applies HMRC's published cryptoasset rules (CRYPTO22000 series) mechanically to public chain data. It cannot see exchange accounts, other wallets, or your intent. Figures are indicative; check them with an accountant before filing. Rates: CGT annual exempt amount £3,000 from 2024/25; CGT at 18% / 24% from 30 October 2024.</p>
