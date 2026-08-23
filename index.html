@@ -24,21 +24,10 @@
   <canvas id="asciiBg" class="hero-bg" aria-hidden="true"></canvas>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap hero-inner">
-    <h1 class="reveal d2">What will HMRC ask you about <em>your crypto</em>?</h1>
-    <p class="lead reveal d3">taxtape turns a public Ethereum address into a UK tax position: every sale, swap, reward and transfer, matched under HMRC's own rules, totalled per tax year. It exists because most people holding crypto have never declared it, and from 2027 HMRC will know, and charge.</p>
-    <div class="panel reveal d4">
-      <form id="form">
-        <input id="address" type="text" placeholder="0x… public Ethereum address" autocomplete="off" spellcheck="false" aria-label="Public Ethereum address">
-        <button id="run" type="submit">Run the tape</button>
-        <button id="sample" type="button" class="secondary">Try the sample</button>
-      </form>
-      <div id="status" class="status"></div>
-      <div class="trust">
-        <div><b>A public address lets anyone see history, not touch it.</b> This page has no connect button and never asks you to sign anything. The address is sent to <a href="https://eth.blockscout.com" rel="noopener">Blockscout</a>, a public explorer, and nowhere else. We never see it, store it, or link it to you.</div>
-        <div class="mono">Verify it yourself: open DevTools → Network and watch where the address goes.<span id="srcLink"> Source: <a href="https://github.com/brwbo/taxtape" rel="noopener">github.com/brwbo/taxtape</a></span></div>
-      </div>
-    </div>
+    <h1 class="reveal d2">taxtape</h1>
+    <p class="lead reveal d3">Turns a public Ethereum address into a UK tax position: every sale, swap, reward and transfer, matched under HMRC's own rules, totalled per tax year. It exists because most people holding crypto have never declared it, and from 2027 HMRC will know, and charge.</p>
     <div class="proof reveal d4"><span>No account</span><span>No wallet connection</span><span>HMRC CRYPTO22000 rules</span><span>Every guess shown and editable</span></div>
+    <a class="scroll-hint reveal d4" href="#runit">Read how it works, then run it ↓</a>
   </div>
 </section>
 
@@ -56,6 +45,23 @@
       <li><b>Check the guesses.</b> Every event is classified (disposal, acquisition, income, transfer) and every guess is marked ⚠ with the reason. Change any you know to be wrong, such as a transfer to your own hardware wallet. The totals recalculate as you go.</li>
       <li><b>Read your position per tax year.</b> Proceeds, allowable costs, gains, losses, the £3,000 exempt amount, what is taxable, and income from staking or airdrops. Then open the full report for the computation an accountant can file from.</li>
     </ol>
+  </section>
+
+
+  <section class="run" id="runit">
+    <h2>Run it</h2>
+    <div class="panel">
+      <form id="form">
+        <input id="address" type="text" placeholder="0x… public Ethereum address" autocomplete="off" spellcheck="false" aria-label="Public Ethereum address">
+        <button id="run" type="submit">Run the tape</button>
+        <button id="sample" type="button" class="secondary">Try the sample</button>
+      </form>
+      <div id="status" class="status"></div>
+      <div class="trust">
+        <div><b>A public address lets anyone see history, not touch it.</b> This page has no connect button and never asks you to sign anything. The address is sent to <a href="https://eth.blockscout.com" rel="noopener">Blockscout</a>, a public explorer, and nowhere else. We never see it, store it, or link it to you.</div>
+        <div class="mono">Verify it yourself: open DevTools → Network and watch where the address goes.<span id="srcLink"> Source: <a href="https://github.com/brwbo/taxtape" rel="noopener">github.com/brwbo/taxtape</a></span></div>
+      </div>
+    </div>
   </section>
 
   <div id="results" class="hidden">
