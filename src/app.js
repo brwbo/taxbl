@@ -3,7 +3,6 @@ import { classify, TYPES, TYPE_LABEL, unpricedAssets } from './classify.js';
 import { computeTax, indicativeCgt } from './engine.js';
 import { SAMPLE_EVENTS } from './sample.js';
 import { buildReport } from './report.js';
-import { mountAscii, makeFieldSource } from './ascii-bg.js';
 
 const $ = (id) => document.getElementById(id);
 const gbp = (n) => (n == null ? '—' : new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n));
@@ -190,27 +189,12 @@ async function submitInterest(ev) {
 const qp = new URLSearchParams(location.search).get('a');
 if (qp && isAddress(qp)) { $('address').value = qp; document.getElementById('runit').scrollIntoView(); runAddress(qp); }
 
-// Hero background: the ASCII video run through the dither engine (inverted: light source bg -> empty, notes -> dense).
-const heroCanvas = $('asciiBg');
-let hero = null;
-if (heroCanvas) {
-  const video = document.createElement('video');
-  Object.assign(video, { muted: true, loop: true, autoplay: true, playsInline: true, preload: 'auto', crossOrigin: 'anonymous' });
-  video.setAttribute('muted', ''); video.setAttribute('playsinline', '');
-  video.src = '/media/hero.mp4';
-  video.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
-  document.body.appendChild(video);
-  hero = mountAscii(heroCanvas, makeFieldSource(), {
-    renderMode: 'dither', cellSize: 10, coverage: 96, contrast: 140, edgeEmphasis: 20, brightness: 14, invert: true, shiftX: 0.16,
-    tint: '#8a6bff', tintOpacity: 45, overlayBlend: 'overlay', bgColor: '#08040f', fgColor: '#e6e0ff', grayscale: 100,
-    animStyle: 'flicker', animSpeed: { enabled: true, intensity: 60 }, animIntensity: { enabled: true, intensity: 25 },
-    pfx: { vignette: { enabled: true, intensity: 65 }, scanLines: { enabled: true, intensity: 12 }, chromatic: { enabled: false }, bloom: { enabled: true, intensity: 35 }, filmGrain: { enabled: true, intensity: 18 }, glitch: { enabled: false } },
-  });
-  const tryPlay = () => { if (video.paused) video.play().catch(() => {}); };
-  const useVideo = () => { hero.setSource(video); tryPlay(); };
-  if (video.readyState >= 2) useVideo(); else video.addEventListener('loadeddata', useVideo, { once: true });
-  video.addEventListener('canplay', tryPlay); video.addEventListener('pause', () => { if (!document.hidden) setTimeout(tryPlay, 200); });
-  document.addEventListener('pointerdown', tryPlay, { once: true }); document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
+// Hero video: raw clip, colour comes from CSS invert/hue-rotate. Keep it playing.
+const heroVideo = $('heroVideo');
+if (heroVideo) {
+  const tryPlay = () => { if (heroVideo.paused) heroVideo.play().catch(() => {}); };
+  heroVideo.addEventListener('canplay', tryPlay);
+  document.addEventListener('pointerdown', tryPlay, { once: true });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
   [300, 1000, 3000].forEach((ms) => setTimeout(tryPlay, ms));
-  window.taxtapeHero = hero;
 }
