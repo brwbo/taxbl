@@ -13,29 +13,46 @@
 <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
-<div class="wrap">
-  <nav class="top reveal d1">
-    <a class="brand" href="/">tax<span>tape</span><small>by rowbo.ai</small></a>
-    <div class="meta"><span class="live"><i></i>CARF reporting live since 1 Jan 2026</span><a href="#privacy">Privacy</a></div>
-  </nav>
-</div>
+
 
 <section class="hero">
-  <canvas id="asciiBg" class="hero-bg" aria-hidden="true"></canvas>
+  <video id="heroVideo" class="hero-video" src="/media/hero.mp4" muted loop autoplay playsinline preload="auto" aria-hidden="true"></video>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap hero-inner">
     <h1 class="reveal d2">taxtape</h1>
     <p class="lead reveal d3">Turns a public Ethereum address into a UK tax position: every sale, swap, reward and transfer, matched under HMRC's own rules, totalled per tax year. It exists because most people holding crypto have never declared it, and from 2027 HMRC will know, and charge.</p>
-    <div class="proof reveal d4"><span>No account</span><span>No wallet connection</span><span>HMRC CRYPTO22000 rules</span><span>Every guess shown and editable</span></div>
-    <a class="scroll-hint reveal d4" href="#runit">Read how it works, then run it ↓</a>
+    <div class="hero-cta reveal d4"><a class="btn" href="#runit">Run it on an address</a><a class="scroll-hint" href="#bento">How it works ↓</a></div>
   </div>
 </section>
 
 <div class="wrap">
-  <section class="why">
-    <div class="why-item"><span class="k">01 · Jan 2026</span><p>UK exchanges and custodial wallets started recording every user's sales, swaps and transfers under the OECD's CARF rules.</p></div>
-    <div class="why-item"><span class="k">02 · Jan–May 2027</span><p>They file that data to HMRC. HMRC matches it against Self Assessment returns and writes to the people who never filed.</p></div>
-    <div class="why-item"><span class="k">03 · The gap</span><p>The exchange file only shows what the exchange saw. What happened after the coins left is on the public ledger, and that is what you will have to reconcile.</p></div>
+  <section class="bento-wrap" id="bento">
+    <div class="bento">
+      <article class="bento-item span2 persist">
+        <div class="bi-top"><span class="bi-icon">◉</span><span class="bi-status live">Live since 1 Jan 2026</span></div>
+        <h3>HMRC is already collecting <span class="bi-meta">CARF</span></h3>
+        <p>UK exchanges and custodial wallets record every user's sales, swaps and transfers to private wallets, and file them to HMRC between January and May 2027. HMRC matches that against Self Assessment and writes to the people who never filed.</p>
+        <div class="bi-tags"><span>#CARF</span><span>#SelfAssessment</span><span>#2027</span></div>
+      </article>
+      <article class="bento-item">
+        <div class="bi-top"><span class="bi-icon">⟁</span><span class="bi-status">The gap</span></div>
+        <h3>The exchange file is partial</h3>
+        <p>It shows what the exchange saw. What happened after the coins left, swaps, staking, airdrops, moves to a hardware wallet, is on the public ledger. That is what you reconcile.</p>
+        <div class="bi-tags"><span>#onchain</span><span>#DeFi</span></div>
+      </article>
+      <article class="bento-item">
+        <div class="bi-top"><span class="bi-icon">§</span><span class="bi-status">Rules</span></div>
+        <h3>HMRC's own matching <span class="bi-meta">CRYPTO22200</span></h3>
+        <p>Same-day first, then purchases in the following 30 days, then the Section 104 pooled average. A crypto-to-crypto swap is a disposal. Staking and airdrops are income on receipt.</p>
+        <div class="bi-tags"><span>#same-day</span><span>#30-day</span><span>#S104</span></div>
+      </article>
+      <article class="bento-item span2">
+        <div class="bi-top"><span class="bi-icon">◌</span><span class="bi-status">Private</span></div>
+        <h3>Nothing leaves your browser <span class="bi-meta">read-only</span></h3>
+        <p>A public address lets anyone see history, not touch it. There is no connect button, no signing, no account. The address goes to a public explorer and nowhere else; we never see it. Every classification is a visible guess you can override.</p>
+        <div class="bi-tags"><span>#no-wallet-connect</span><span>#open-source</span></div>
+      </article>
+    </div>
   </section>
 
   <section class="how">
