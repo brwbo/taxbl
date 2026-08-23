@@ -3,6 +3,7 @@ import { classify, TYPES, TYPE_LABEL, unpricedAssets } from './classify.js';
 import { computeTax, indicativeCgt } from './engine.js';
 import { SAMPLE_EVENTS } from './sample.js';
 import { buildReport } from './report.js';
+import { parseExchangeCsv } from './csv.js';
 
 const $ = (id) => document.getElementById(id);
 const gbp = (n) => (n == null ? '—' : new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n));
@@ -148,6 +149,36 @@ $('sample').addEventListener('click', () => {
 $('rows').addEventListener('change', onEdit);
 $('onlyFlagged').addEventListener('change', render);
 $('export').addEventListener('click', exportCsv);
+$('csvFile').addEventListener('change', importCsvFiles);
+$('tplLink').addEventListener('click', (ev) => {
+  ev.preventDefault();
+  const blob = new Blob(['date,type,asset,amount,gbp_value,fee_gbp,note\n2024-06-01,acquire,ETH,1,2000,5,bought on exchange\n2024-09-01,dispose,ETH,1,2500,5,sold for GBP\n'], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'taxbl-template.csv'; a.click();
+});
+
+async function importCsvFiles(ev) {
+  const files = [...ev.target.files];
+  if (!files.length) return;
+  const results = [];
+  for (const f of files) {
+    try {
+      setStatus(`Reading ${f.name}…`);
+      const { events: imported, format, skipped } = await parseExchangeCsv(await f.text(), f.name);
+      events = events.concat(imported);
+      results.push(`${f.name}: ${imported.length} events (${format}${skipped ? `, ${skipped} rows skipped` : ''})`);
+    } catch (err) {
+      results.push(err.message || `${f.name}: failed`);
+    }
+  }
+  ev.target.value = '';
+  if (events.length) {
+    events.sort((a, b) => Date.parse(a.ts) - Date.parse(b.ts));
+    if (!source.label) source = { label: 'csv-import', truncated: false };
+    else if (source.label !== 'csv-import') source = { label: `${source.label}+csv`, truncated: source.truncated };
+    revealResults();
+  }
+  setStatus(results.join(' · '));
+}
 $('summary').addEventListener('click', (ev) => { if (ev.target.id === 'openReport') openReport(); });
 $('closeReport').addEventListener('click', () => $('reportDlg').close());
 $('printReport').addEventListener('click', () => window.print());

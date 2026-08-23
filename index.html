@@ -62,6 +62,11 @@
         <button id="sample" type="button" class="secondary">Try the sample</button>
       </form>
       <div id="status" class="status"></div>
+      <div class="csvrow">
+        <label class="csvbtn" for="csvFile">Upload exchange CSVs</label>
+        <input id="csvFile" type="file" accept=".csv,text/csv" multiple class="visually-hidden">
+        <span class="csvhint">Coinbase transaction history, Kraken ledgers, Binance history, or <a href="#" id="tplLink">this template</a>. Parsed in your browser; the file is never uploaded. Combine with an address to cover both.</span>
+      </div>
       <div class="trust">
         <div><b>A public address lets anyone see history, not touch it.</b> This page has no connect button and never asks you to sign anything. The address is sent to <a href="https://eth.blockscout.com" rel="noopener">Blockscout</a>, a public explorer, and nowhere else. We never see it, store it, or link it to you.</div>
         <div class="mono">Verify it yourself: open DevTools → Network and watch where the address goes.<span id="srcLink" class="hidden"> Source: <a href="https://github.com/brwbo/taxbl" rel="noopener">github.com/brwbo/taxbl</a></span></div>
