@@ -128,7 +128,7 @@ function exportCsv() {
   const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `taxtape-${source.label || 'wallet'}.csv`;
+  a.download = `taxbl-${source.label || 'wallet'}.csv`;
   a.click();
 }
 

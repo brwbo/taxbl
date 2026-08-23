@@ -1,4 +1,4 @@
-/* taxtape — rowbo.ai design system: near-black purple, hot pink, cyan; Bricolage / Archivo / IBM Plex Mono */
+/* taxbl — rowbo.ai design system: near-black purple, hot pink, cyan; Bricolage / Archivo / IBM Plex Mono */
 :root {
   --bg: #08040f; --bg-2: #0e0818; --panel: rgba(14,8,24,.78); --line: rgba(255,255,255,.12); --line-2: rgba(255,255,255,.22);
   --text: #ffffff; --muted: rgba(255,255,255,.55); --faint: rgba(255,255,255,.35);
@@ -28,6 +28,7 @@ nav.top .live i { display: inline-block; width: 8px; height: 8px; border-radius:
 .hero-inner { text-align: center; width: 100%; }
 .hero h1 { margin-left: auto !important; }
 .hero p.lead { margin-left: auto !important; }
+.say { font-family: var(--mono); font-size: 13px; color: var(--muted); margin: -8px 0 18px; letter-spacing: .04em; } .say em { font-style: normal; color: var(--pink); }
 .hero-cta { display: flex; gap: 18px; align-items: center; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
 .btn { display: inline-block; background: var(--pink); color: #fff; border-radius: 12px; padding: 13px 20px; font-weight: 700; font-size: 14px; box-shadow: 0 8px 24px rgba(255,46,136,.2); }
 .btn:hover { text-decoration: none; transform: translateY(-1px); }

@@ -13,12 +13,12 @@ const USD_STABLES = new Set(['USDC', 'USDT', 'DAI', 'USDE', 'PYUSD', 'FDUSD', 'T
 const mem = new Map();
 function cacheGet(k) {
   if (mem.has(k)) return mem.get(k);
-  try { const v = localStorage.getItem(`taxtape:${k}`); if (v != null) { mem.set(k, JSON.parse(v)); return mem.get(k); } } catch {}
+  try { const v = localStorage.getItem(`taxbl:${k}`); if (v != null) { mem.set(k, JSON.parse(v)); return mem.get(k); } } catch {}
   return undefined;
 }
 function cacheSet(k, v) {
   mem.set(k, v);
-  try { localStorage.setItem(`taxtape:${k}`, JSON.stringify(v)); } catch {}
+  try { localStorage.setItem(`taxbl:${k}`, JSON.stringify(v)); } catch {}
 }
 
 function dayOf(ts) { return new Date(ts).toISOString().slice(0, 10); }

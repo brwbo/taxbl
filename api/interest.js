@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     ts: new Date().toISOString(),
     email,
     consent: true,
-    consentText: 'Email me about the taxtape full report launch. Unsubscribe any time.',
+    consentText: 'Email me about the taxbl full report launch. Unsubscribe any time.',
     taxYears: String(body.taxYears || '').slice(0, 100),
     disposals: Math.max(0, Math.min(100000, Number(body.disposals) || 0)),
     taxable: Math.max(0, Math.min(1e9, Number(body.taxable) || 0)),
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
   const url = process.env.INTEREST_WEBHOOK_URL;
   if (url) {
-    const text = `taxtape interest · ${record.email} · consent ${record.ts} · years ${record.taxYears || '?'} · ${record.disposals} disposals · taxable £${record.taxable.toFixed(0)} · ${record.source}`;
+    const text = `taxbl interest · ${record.email} · consent ${record.ts} · years ${record.taxYears || '?'} · ${record.disposals} disposals · taxable £${record.taxable.toFixed(0)} · ${record.source}`;
     try {
       await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ content: text, text }) });
     } catch (err) {
