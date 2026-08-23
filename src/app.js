@@ -3,7 +3,7 @@ import { classify, TYPES, TYPE_LABEL, unpricedAssets } from './classify.js';
 import { computeTax, indicativeCgt } from './engine.js';
 import { SAMPLE_EVENTS } from './sample.js';
 import { buildReport } from './report.js';
-import { mountAscii, makePlaceholderSource } from './ascii-bg.js';
+import { mountAscii, makeFieldSource } from './ascii-bg.js';
 
 const $ = (id) => document.getElementById(id);
 const gbp = (n) => (n == null ? '—' : new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n));
@@ -193,11 +193,11 @@ if (qp && isAddress(qp)) { $('address').value = qp; runAddress(qp); }
 const heroCanvas = $('asciiBg');
 let hero = null;
 if (heroCanvas) {
-  hero = mountAscii(heroCanvas, makePlaceholderSource(), {
-    renderMode: 'dither', cellSize: 12, coverage: 92, contrast: 108, edgeEmphasis: 30, brightness: -30,
-    tint: '#6b4cff', tintOpacity: 38, overlayBlend: 'overlay', bgColor: '#08040f', fgColor: '#ffffff', grayscale: 100,
-    animStyle: 'shimmer', animSpeed: { enabled: true, intensity: 35 }, animIntensity: { enabled: true, intensity: 30 },
-    pfx: { vignette: { enabled: true, intensity: 60 }, scanLines: { enabled: true, intensity: 14 }, chromatic: { enabled: false }, bloom: { enabled: true, intensity: 30 }, filmGrain: { enabled: true, intensity: 22 }, glitch: { enabled: false } },
+  hero = mountAscii(heroCanvas, makeFieldSource(), {
+    renderMode: 'hexdump', cellSize: 13, coverage: 70, contrast: 120, edgeEmphasis: 0, brightness: -40,
+    tint: '#8a6bff', tintOpacity: 42, overlayBlend: 'overlay', bgColor: '#08040f', fgColor: '#d9d2ff', grayscale: 100,
+    animStyle: 'shimmer', animSpeed: { enabled: true, intensity: 20 }, animIntensity: { enabled: true, intensity: 22 },
+    pfx: { vignette: { enabled: true, intensity: 70 }, scanLines: { enabled: false }, chromatic: { enabled: false }, bloom: { enabled: true, intensity: 25 }, filmGrain: { enabled: true, intensity: 16 }, glitch: { enabled: false } },
   });
   window.taxtapeHero = hero;
 }
