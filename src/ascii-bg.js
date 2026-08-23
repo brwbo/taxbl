@@ -16,7 +16,7 @@ export const DEFAULT_PARAMS = {
     pixelate: { enabled: false, intensity: 15 }, halftone: { enabled: false, intensity: 20 }, filmDust: { enabled: false, intensity: 20 },
   },
   animated: true, animStyle: 'flicker', animSpeed: { enabled: true, intensity: 100 }, animIntensity: { enabled: true, intensity: 60 },
-  fgColor: '#ffffff', maxDpr: 1.5,
+  fgColor: '#ffffff', maxDpr: 1.5, shiftX: 0, shiftY: 0, // fraction of the canvas to shift the subject by
 };
 
 const CHARSETS = {
@@ -62,9 +62,10 @@ export function mountAscii(canvas, source, userParams = {}) {
     return source.width > 0;
   }
 
-  function coverDraw(c, sw, sh, dw, dh) { // object-fit: cover
-    const s = Math.max(dw / sw, dh / sh); const w = sw * s, h = sh * s;
-    c.drawImage(source, (dw - w) / 2, (dh - h) / 2, w, h);
+  function coverDraw(c, sw, sh, dw, dh) { // object-fit: cover, zoomed enough that a shifted subject still covers the frame
+    const zoom = 1 + Math.abs(P.shiftX || 0) * 2 + Math.abs(P.shiftY || 0) * 2;
+    const s = Math.max(dw / sw, dh / sh) * zoom; const w = sw * s, h = sh * s;
+    c.drawImage(source, (dw - w) / 2 + dw * (P.shiftX || 0), (dh - h) / 2 + dh * (P.shiftY || 0), w, h);
   }
 
   function sample() {
