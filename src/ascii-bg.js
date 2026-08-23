@@ -233,14 +233,14 @@ function makeDotPattern(s) { const c = document.createElement('canvas'); c.width
 /** Procedural placeholder subject (an Ethereum diamond lit from above) so the hero works before a video exists. */
 export function makePlaceholderSource(w = 960, h = 540) {
   const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
-  const bg = x.createRadialGradient(w * 0.5, h * 0.45, 20, w * 0.5, h * 0.45, w * 0.6); bg.addColorStop(0, '#3a2a55'); bg.addColorStop(1, '#05030a');
+  const bg = x.createRadialGradient(w * 0.74, h * 0.5, 20, w * 0.74, h * 0.5, w * 0.5); bg.addColorStop(0, '#221838'); bg.addColorStop(1, '#05030a');
   x.fillStyle = bg; x.fillRect(0, 0, w, h);
-  const cx = w / 2, cy = h / 2, s = h * 0.42;
+  const cx = w * 0.74, cy = h * 0.5, s = h * 0.5;
   const faces = [
     [[cx, cy - s], [cx + s * 0.62, cy + s * 0.05], [cx, cy + s * 0.3]], [[cx, cy - s], [cx - s * 0.62, cy + s * 0.05], [cx, cy + s * 0.3]],
     [[cx, cy + s * 0.3], [cx + s * 0.62, cy + s * 0.05], [cx + s * 0.62, cy + s * 0.2], [cx, cy + s]], [[cx, cy + s * 0.3], [cx - s * 0.62, cy + s * 0.05], [cx - s * 0.62, cy + s * 0.2], [cx, cy + s]],
   ];
-  const shades = ['#f2f2f7', '#a9a6c8', '#c5c3dd', '#6f6b94'];
+  const shades = ['#b9b4d6', '#6f6a94', '#8c87b0', '#46425f'];
   faces.forEach((f, i) => { x.beginPath(); f.forEach(([px, py], k) => (k ? x.lineTo(px, py) : x.moveTo(px, py))); x.closePath(); x.fillStyle = shades[i]; x.fill(); });
   return c;
 }

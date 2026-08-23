@@ -194,7 +194,10 @@ const heroCanvas = $('asciiBg');
 let hero = null;
 if (heroCanvas) {
   hero = mountAscii(heroCanvas, makePlaceholderSource(), {
-    tint: '#ff2e88', tintOpacity: 45, bgColor: '#08040f', fgColor: '#ffffff', grayscale: 100, brightness: -22,
+    renderMode: 'dither', cellSize: 12, coverage: 92, contrast: 108, edgeEmphasis: 30, brightness: -30,
+    tint: '#6b4cff', tintOpacity: 38, overlayBlend: 'overlay', bgColor: '#08040f', fgColor: '#ffffff', grayscale: 100,
+    animStyle: 'shimmer', animSpeed: { enabled: true, intensity: 35 }, animIntensity: { enabled: true, intensity: 30 },
+    pfx: { vignette: { enabled: true, intensity: 60 }, scanLines: { enabled: true, intensity: 14 }, chromatic: { enabled: false }, bloom: { enabled: true, intensity: 30 }, filmGrain: { enabled: true, intensity: 22 }, glitch: { enabled: false } },
   });
   window.taxtapeHero = hero;
 }
