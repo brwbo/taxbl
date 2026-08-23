@@ -2,8 +2,8 @@
 // stripped of anything identifying) and returns a plain-English explanation.
 // Privacy: the frontend never sends addresses or transaction hashes here - see buildAiPayload()
 // in src/app.js - and this endpoint rejects anything that looks like one, mirroring /api/interest.
+// Provider: OpenAI chat completions (OPENAI_API_KEY; model via OPENAI_MODEL, default gpt-5.1).
 
-import Anthropic from '@anthropic-ai/sdk';
 
 const MAX_EVENTS = 60;
 const hits = new Map(); // best-effort per-instance rate limit
@@ -28,7 +28,7 @@ Write the explanation a worried, non-expert UK person needs. Rules:
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'POST only' });
-  if (!process.env.ANTHROPIC_API_KEY) return res.status(503).json({ ok: false, error: 'AI is not configured yet.' });
+  if (!process.env.OPENAI_API_KEY) return res.status(503).json({ ok: false, error: 'AI is not configured yet.' });
 
   const ip = String(req.headers['x-forwarded-for'] || 'x').split(',')[0];
   const now = Date.now();
@@ -45,22 +45,23 @@ export default async function handler(req, res) {
   const events = Array.isArray(body.events) ? body.events.slice(0, MAX_EVENTS) : [];
   if (!years.length) return res.status(400).json({ ok: false, error: 'Run the tape first.' });
 
-  const client = new Anthropic();
   try {
-    const response = await client.beta.messages.create({
-      model: 'claude-opus-5',
-      max_tokens: 2000,
-      output_config: { effort: 'low' },
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      system: SYSTEM,
-      messages: [{
-        role: 'user',
-        content: `Per-tax-year summaries:\n${JSON.stringify(years)}\n\nEvents (flagged ones carry "flags"):\n${JSON.stringify(events)}\n\nExplain this person's position.`,
-      }],
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || 'gpt-5.1',
+        max_completion_tokens: 2000,
+        messages: [
+          { role: 'system', content: SYSTEM },
+          { role: 'user', content: `Per-tax-year summaries:\n${JSON.stringify(years)}\n\nEvents (flagged ones carry "flags"):\n${JSON.stringify(events)}\n\nExplain this person's position.` },
+        ],
+      }),
     });
-    if (response.stop_reason === 'refusal') return res.status(200).json({ ok: false, error: 'The explainer declined this one. The numbers on the page still stand.' });
-    const text = response.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n').trim();
+    if (resp.status === 429) return res.status(503).json({ ok: false, error: 'The AI is busy. Try again in a minute.' });
+    if (!resp.ok) { console.error('openai', resp.status, (await resp.text()).slice(0, 300)); return res.status(502).json({ ok: false, error: 'Explanation failed. The numbers on the page still stand.' }); }
+    const data = await resp.json();
+    const text = (data.choices?.[0]?.message?.content || '').trim();
     if (!text) return res.status(502).json({ ok: false, error: 'Empty response. Try again.' });
     return res.status(200).json({ ok: true, text });
   } catch (err) {
