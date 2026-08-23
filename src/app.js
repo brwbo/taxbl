@@ -45,7 +45,7 @@ function render() {
       </ul>
     </div>
     <div class="card cta"><div><h3>Full report</h3><p>The Self Assessment computation for every tax year: SA108 figures, a per-disposal audit trail showing which purchases were matched under which rule, income schedule, and closing pools. Printable to PDF.</p></div>
-      <div><button id="openReport" type="button">See the full report</button><span class="price">£29 per tax year when it launches</span></div></div>`;
+      <div><button id="explainBtn" type="button" class="secondary">Explain my position</button> <button id="openReport" type="button">See the full report</button><span class="price">£29 per tax year when it launches</span></div></div>`;
 
   $('years').innerHTML = yearList.map((y) => {
     const cgt = indicativeCgt(y.taxYear, y.taxableGain);
@@ -179,7 +179,34 @@ async function importCsvFiles(ev) {
   }
   setStatus(results.join(' · '));
 }
-$('summary').addEventListener('click', (ev) => { if (ev.target.id === 'openReport') openReport(); });
+$('summary').addEventListener('click', (ev) => { if (ev.target.id === 'openReport') openReport(); if (ev.target.id === 'explainBtn') explainPosition(); });
+$('explainAgain').addEventListener('click', explainPosition);
+
+// Strip everything identifying before anything leaves the browser: no ids (they embed tx hashes),
+// no counterparties, no hashes. Dates, types, assets, amounts, sterling values, notes, flags only.
+function buildAiPayload() {
+  const { years } = computeTax(events);
+  return {
+    years: Object.values(years).map((y) => ({ taxYear: y.taxYear, disposals: y.disposals, proceeds: Math.round(y.proceeds), allowableCost: Math.round(y.allowableCost), gains: Math.round(y.gains), losses: Math.round(y.losses), netGain: Math.round(y.netGain), allowance: y.allowance, taxableGain: Math.round(y.taxableGain), income: Math.round(y.income) })),
+    events: events.filter((e) => e.type !== 'ignore').slice(0, 60).map((e) => ({ date: e.ts.slice(0, 10), type: e.type, asset: e.asset, amount: e.amount, gbp: Math.round(e.gbp || 0), note: String(e.note || '').replace(/0x[0-9a-fA-F]{4,}[…]?[0-9a-fA-F]*/g, 'a wallet').slice(0, 120), flags: (e.flags || []).map((f) => String(f).replace(/0x[0-9a-fA-F]{4,}[…]?[0-9a-fA-F]*/g, 'a wallet').slice(0, 160)) })),
+  };
+}
+
+async function explainPosition() {
+  if (!events.length) return;
+  const wrap = $('explainWrap'); const body = $('explainBody');
+  wrap.classList.remove('hidden');
+  body.className = 'loading'; body.textContent = 'Reading the tape…';
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  try {
+    const res = await fetch('/api/ai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(buildAiPayload()) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    body.className = ''; body.textContent = data.text;
+  } catch (err) {
+    body.className = 'loading'; body.textContent = err.message || 'Explanation failed. The numbers above still stand.';
+  }
+}
 $('closeReport').addEventListener('click', () => $('reportDlg').close());
 $('printReport').addEventListener('click', () => window.print());
 $('unlockForm').addEventListener('submit', submitInterest);

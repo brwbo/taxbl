@@ -6,5 +6,8 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "build": "node -e \"console.log('static site, nothing to build')\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0"
   }
 }

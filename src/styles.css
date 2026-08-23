@@ -69,6 +69,13 @@ button:disabled { opacity: .55; cursor: wait; transform: none; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .reveal { animation: none; opacity: 1; transform: none; } }
 
+/* explain panel */
+.explain { margin-top: 14px; border: 1px solid rgba(255,46,136,.35); border-radius: 14px; background: linear-gradient(135deg, rgba(255,46,136,.08), rgba(14,8,24,.8) 55%); padding: 18px 20px; }
+.explain-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.explain-head h3 { margin: 0; font-family: var(--display); font-size: 17px; font-weight: 600; }
+#explainBody { color: rgba(255,255,255,.82); font-size: 14.5px; line-height: 1.7; white-space: pre-wrap; max-width: 90ch; }
+#explainBody.loading { color: var(--muted); font-family: var(--mono); font-size: 13px; }
+
 /* plain info text */
 .info { margin-top: 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px 48px; }
 .info-block h3 { font-family: var(--display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 8px; }
