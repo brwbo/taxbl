@@ -205,9 +205,13 @@ export function mountAscii(canvas, source, userParams = {}) {
     if (P.blurType !== 'off' && P.blurAmount > 0) { ctx.save(); ctx.filter = `blur(${P.blurAmount / 10 * dpr}px)`; ctx.drawImage(canvas, 0, 0); ctx.restore(); }
   }
 
+  let last = 0;
   function frame(now) {
     if (!running) return;
     const t = now - t0;
+    if (now - last < 40) { raf = requestAnimationFrame(frame); return; }
+    last = now;
+    if (typeof source.tick === 'function') source.tick(t);
     if (sourceReady()) { const data = sample(); drawBackground(); drawCells(data, t); composite(t); }
     if (reduced || !P.animated) { running = false; return; } // one static frame
     raf = requestAnimationFrame(frame);
@@ -230,17 +234,23 @@ function makeGrain(size) {
 }
 function makeDotPattern(s) { const c = document.createElement('canvas'); c.width = s; c.height = s; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, s, s); x.fillStyle = '#000'; x.beginPath(); x.arc(s / 2, s / 2, s * 0.28, 0, Math.PI * 2); x.fill(); return c; }
 
-/** Procedural placeholder subject (an Ethereum diamond lit from above) so the hero works before a video exists. */
-export function makePlaceholderSource(w = 960, h = 540) {
+/** Procedural animated source: slow-drifting soft light fields. Call .tick(t) each frame. Swap for a <video> later. */
+export function makeFieldSource(w = 640, h = 360) {
   const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
-  const bg = x.createRadialGradient(w * 0.74, h * 0.5, 20, w * 0.74, h * 0.5, w * 0.5); bg.addColorStop(0, '#221838'); bg.addColorStop(1, '#05030a');
-  x.fillStyle = bg; x.fillRect(0, 0, w, h);
-  const cx = w * 0.74, cy = h * 0.5, s = h * 0.5;
-  const faces = [
-    [[cx, cy - s], [cx + s * 0.62, cy + s * 0.05], [cx, cy + s * 0.3]], [[cx, cy - s], [cx - s * 0.62, cy + s * 0.05], [cx, cy + s * 0.3]],
-    [[cx, cy + s * 0.3], [cx + s * 0.62, cy + s * 0.05], [cx + s * 0.62, cy + s * 0.2], [cx, cy + s]], [[cx, cy + s * 0.3], [cx - s * 0.62, cy + s * 0.05], [cx - s * 0.62, cy + s * 0.2], [cx, cy + s]],
+  const blobs = [
+    { r: 0.55, px: 0.25, py: 0.4, sx: 0.00011, sy: 0.00007, a: 0.9 }, { r: 0.45, px: 0.75, py: 0.55, sx: -0.00009, sy: 0.00012, a: 0.8 },
+    { r: 0.35, px: 0.55, py: 0.85, sx: 0.00013, sy: -0.00008, a: 0.6 }, { r: 0.3, px: 0.9, py: 0.2, sx: -0.00006, sy: -0.0001, a: 0.5 },
   ];
-  const shades = ['#b9b4d6', '#6f6a94', '#8c87b0', '#46425f'];
-  faces.forEach((f, i) => { x.beginPath(); f.forEach(([px, py], k) => (k ? x.lineTo(px, py) : x.moveTo(px, py))); x.closePath(); x.fillStyle = shades[i]; x.fill(); });
+  c.tick = (t) => {
+    x.fillStyle = '#000'; x.fillRect(0, 0, w, h);
+    x.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < blobs.length; i++) {
+      const b = blobs[i]; const cx = (b.px + Math.sin(t * b.sx * 6 + i) * 0.18) * w; const cy = (b.py + Math.cos(t * b.sy * 6 + i * 2) * 0.16) * h;
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, b.r * w); g.addColorStop(0, `rgba(255,255,255,${b.a})`); g.addColorStop(0.55, `rgba(255,255,255,${b.a * 0.25})`); g.addColorStop(1, 'rgba(255,255,255,0)');
+      x.fillStyle = g; x.fillRect(0, 0, w, h);
+    }
+    x.globalCompositeOperation = 'source-over';
+  };
+  c.tick(0);
   return c;
 }

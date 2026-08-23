@@ -23,8 +23,8 @@ nav.top .live i { display: inline-block; width: 8px; height: 8px; border-radius:
 
 /* hero with ascii canvas */
 .hero { position: relative; margin-top: -70px; padding: 140px 0 36px; overflow: hidden; isolation: isolate; }
-.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; opacity: .7; }
-.hero-fade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse 70% 80% at 50% 40%, rgba(8,4,15,.35), rgba(8,4,15,.85) 70%, var(--bg) 100%), linear-gradient(180deg, rgba(8,4,15,.6) 0%, rgba(8,4,15,0) 30%, rgba(8,4,15,0) 60%, var(--bg) 100%); }
+.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; opacity: .85; }
+.hero-fade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse 55% 60% at 50% 42%, rgba(8,4,15,.55), rgba(8,4,15,0) 100%), linear-gradient(180deg, rgba(8,4,15,.5) 0%, rgba(8,4,15,0) 25%, rgba(8,4,15,0) 65%, var(--bg) 100%); }
 .hero-inner { text-align: center; }
 .badge { display: inline-flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 999px; background: rgba(6,3,12,.75); border: 1px solid var(--line-2); font-family: var(--mono); font-size: 12.5px; color: var(--text); box-shadow: 0 10px 40px rgba(255,46,136,.15); }
 .badge b { background: var(--pink); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 11px; letter-spacing: .12em; font-weight: 600; }
