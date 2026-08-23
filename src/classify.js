@@ -59,7 +59,8 @@ export async function classify(legs, onProgress) {
     const feeGbp = feeEth ? (await valueOf({ kind: 'native' }, feeEth, ts)) || 0 : 0;
     const mk = (leg, type, gbp, note, flags, extra = {}) => ({
       id: `${hash}:${events.length}`, hash, ts, type, asset: leg.symbol, assetId: leg.asset, amount: leg.amount,
-      gbp: gbp == null ? 0 : gbp, priced: gbp != null, feeGbp: 0, note, flags, counterparty: leg.counterparty, ...extra,
+      gbp: gbp == null ? 0 : gbp, priced: gbp != null, feeGbp: 0, note, flags, counterparty: leg.counterparty,
+      contractName: leg.counterpartyName || '', method: leg.method || '', tokenName: leg.tokenName || '', ...extra,
     });
 
     if (outs.length && ins.length) {

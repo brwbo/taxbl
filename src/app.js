@@ -181,6 +181,41 @@ async function importCsvFiles(ev) {
 }
 $('summary').addEventListener('click', (ev) => { if (ev.target.id === 'openReport') openReport(); if (ev.target.id === 'explainBtn') explainPosition(); });
 $('explainAgain').addEventListener('click', explainPosition);
+$('aiCheck').addEventListener('click', aiCheckFlagged);
+
+async function aiCheckFlagged() {
+  const flagged = events.map((e, i) => ({ e, i })).filter(({ e }) => (e.flags?.length || !e.priced) && e.type !== 'ignore').slice(0, 40);
+  if (!flagged.length) { setStatus('Nothing flagged to check.'); return; }
+  const btn = $('aiCheck'); btn.disabled = true;
+  setStatus(`AI checking ${flagged.length} flagged event${flagged.length === 1 ? '' : 's'}…`);
+  const scrub = (t) => String(t || '').replace(/0x[0-9a-fA-F]{4,}[…]?[0-9a-fA-F]*/g, 'a wallet').slice(0, 160);
+  const payload = {
+    task: 'classify',
+    events: flagged.map(({ e }, k) => ({
+      idx: k, date: e.ts.slice(0, 10), type: e.type, asset: e.asset, tokenName: scrub(e.tokenName), amount: e.amount,
+      contractName: scrub(e.contractName), method: scrub(e.method), note: scrub(e.note), flags: (e.flags || []).map(scrub),
+    })),
+  };
+  try {
+    const res = await fetch('/api/ai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    let changed = 0, confirmed = 0;
+    for (const s of data.suggestions || []) {
+      const item = flagged[s.idx]; if (!item) continue;
+      const e = events[item.i];
+      const pct = Math.round((s.confidence || 0) * 100);
+      e.flags = (e.flags || []).filter((f) => !f.startsWith('AI:'));
+      if (s.type !== e.type && s.confidence >= 0.6) { e.type = s.type; e.flags.push(`AI: reclassified to ${s.type} (${pct}% sure). ${s.reason}`); changed++; }
+      else if (s.type === e.type) { e.flags.push(`AI: agrees with ${e.type} (${pct}% sure). ${s.reason}`); confirmed++; }
+      else { e.flags.push(`AI: unsure, suggests ${s.type} (${pct}%). ${s.reason} Change it yourself if right.`); }
+    }
+    render();
+    setStatus(`AI check done: ${changed} reclassified, ${confirmed} confirmed. Every change is noted on its row and still yours to override.`);
+  } catch (err) {
+    setStatus(err.message || 'AI check failed.', true);
+  } finally { btn.disabled = false; }
+}
 
 // Strip everything identifying before anything leaves the browser: no ids (they embed tx hashes),
 // no counterparties, no hashes. Dates, types, assets, amounts, sterling values, notes, flags only.
