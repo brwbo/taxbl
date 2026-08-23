@@ -23,12 +23,12 @@ nav.top .live i { display: inline-block; width: 8px; height: 8px; border-radius:
 
 /* hero with ascii canvas */
 .hero { position: relative; margin-top: 0; padding: 120px 0 90px; min-height: 88vh; display: flex; align-items: center; overflow: hidden; isolation: isolate; }
-.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 50%; z-index: 0; filter: invert(1) hue-rotate(-12deg) saturate(1.7) contrast(1.15) brightness(.9); opacity: .9; }
-.hero-fade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse 48% 55% at 40% 45%, rgba(8,4,15,.6), rgba(8,4,15,0) 100%), linear-gradient(90deg, rgba(8,4,15,.85) 0%, rgba(8,4,15,.2) 45%, rgba(8,4,15,0) 70%), linear-gradient(180deg, rgba(8,4,15,.3) 0%, rgba(8,4,15,0) 20%, rgba(8,4,15,0) 70%, var(--bg) 100%); }
-.hero-inner { text-align: left; width: 100%; }
-.hero h1 { margin-left: 0 !important; }
-.hero p.lead { margin-left: 0 !important; }
-.hero-cta { display: flex; gap: 18px; align-items: center; margin-top: 30px; flex-wrap: wrap; }
+.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; z-index: 0; filter: invert(1) hue-rotate(-12deg) saturate(1.7) contrast(1.15) brightness(.9); opacity: .9; }
+.hero-fade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse 52% 58% at 50% 48%, rgba(8,4,15,.72), rgba(8,4,15,.1) 100%), linear-gradient(180deg, rgba(8,4,15,.3) 0%, rgba(8,4,15,0) 20%, rgba(8,4,15,0) 70%, var(--bg) 100%); }
+.hero-inner { text-align: center; width: 100%; }
+.hero h1 { margin-left: auto !important; }
+.hero p.lead { margin-left: auto !important; }
+.hero-cta { display: flex; gap: 18px; align-items: center; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
 .btn { display: inline-block; background: var(--pink); color: #fff; border-radius: 12px; padding: 13px 20px; font-weight: 700; font-size: 14px; box-shadow: 0 8px 24px rgba(255,46,136,.2); }
 .btn:hover { text-decoration: none; transform: translateY(-1px); }
 .scroll-hint { display: inline-block; margin-top: 0; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
