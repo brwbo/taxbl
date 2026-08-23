@@ -3,6 +3,7 @@ import { classify, TYPES, TYPE_LABEL, unpricedAssets } from './classify.js';
 import { computeTax, indicativeCgt } from './engine.js';
 import { SAMPLE_EVENTS } from './sample.js';
 import { buildReport } from './report.js';
+import { mountAscii, makePlaceholderSource } from './ascii-bg.js';
 
 const $ = (id) => document.getElementById(id);
 const gbp = (n) => (n == null ? '—' : new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(n));
@@ -164,19 +165,21 @@ async function submitInterest(ev) {
   const ys = Object.values(years);
   const payload = {
     email: $('unlockEmail').value.trim(),
+    consent: $('unlockConsent').checked === true,
     taxYears: ys.map((y) => y.taxYear).join(','),
     disposals: ys.reduce((s, y) => s + y.disposals, 0),
     taxable: ys.reduce((s, y) => s + y.taxableGain, 0),
     source: source.label === 'sample-wallet' ? 'sample' : 'wallet',
   };
   const msg = $('unlockMsg'); const btn = $('unlockBtn');
+  if (!payload.consent) { msg.className = 'msg err'; msg.textContent = 'Tick the box to agree to be emailed.'; return; }
   btn.disabled = true; msg.className = 'msg'; msg.textContent = 'Saving…';
   try {
     const res = await fetch('/api/interest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok) throw new Error(data.error || `Request failed (${res.status})`);
     msg.className = 'msg ok'; msg.textContent = 'Got it. You will get the first release free.';
-    $('unlockEmail').value = '';
+    $('unlockEmail').value = ''; $('unlockConsent').checked = false;
   } catch (err) {
     msg.className = 'msg err'; msg.textContent = err.message || 'Could not save that. Try again.';
   } finally { btn.disabled = false; }
@@ -185,3 +188,13 @@ async function submitInterest(ev) {
 // Deep link: ?a=0x…
 const qp = new URLSearchParams(location.search).get('a');
 if (qp && isAddress(qp)) { $('address').value = qp; runAddress(qp); }
+
+// Hero background: ASCII dither effect. Swap the placeholder for a <video> by calling hero.setSource(videoEl).
+const heroCanvas = $('asciiBg');
+let hero = null;
+if (heroCanvas) {
+  hero = mountAscii(heroCanvas, makePlaceholderSource(), {
+    tint: '#ff2e88', tintOpacity: 45, bgColor: '#08040f', fgColor: '#ffffff', grayscale: 100, brightness: -22,
+  });
+  window.taxtapeHero = hero;
+}
