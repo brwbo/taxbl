@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeTax } from '../src/engine.js';
+import { computeTax, indicativeCgt } from '../src/engine.js';
 import { taxYearOf, annualExemptAmount } from '../src/taxyear.js';
 
 const close = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: ${a} vs ${b}`);
@@ -118,4 +118,25 @@ test('transfers and ignored events have no effect', () => {
   ]);
   assert.equal(r.disposals.length, 0);
   close(r.pools.ETH.amount, 1, 'pool intact');
+});
+
+test('2024/25 mid-year rate change: pre-30-Oct gains blend at 10/20 (verified vs hmrc/capital-gains-calculator)', () => {
+  const r = computeTax([
+    ev('acquire', '2024-05-01T10:00:00Z', 'ETH', 2, 2000),
+    ev('dispose', '2024-06-01T10:00:00Z', 'ETH', 1, 6000), // +5000 pre change
+    ev('dispose', '2024-12-01T10:00:00Z', 'ETH', 1, 6000), // +5000 post change
+  ]);
+  const y = r.years['2024/25'];
+  close(y.preOct30Share, 0.5, 'half the gains pre 30 Oct');
+  const cgt = indicativeCgt('2024/25', y.taxableGain, y.preOct30Share);
+  close(cgt.basic, y.taxableGain * 0.5 * 0.10 + y.taxableGain * 0.5 * 0.18, 'blended basic');
+  assert.ok(cgt.mixed);
+});
+
+test('taxable gain floors the net gain (HMRC rounding: gains down, allowance up)', () => {
+  const r = computeTax([
+    ev('acquire', '2024-05-01T10:00:00Z', 'ETH', 1, 1000),
+    ev('dispose', '2024-12-01T10:00:00Z', 'ETH', 1, 4500.75),
+  ]);
+  close(r.years['2024/25'].taxableGain, 500, 'floor(3500.75) - 3000');
 });

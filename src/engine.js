@@ -133,10 +133,12 @@ export function computeTax(events) {
     taxYear: label, disposals: 0, proceeds: 0, allowableCost: 0, gains: 0, losses: 0, netGain: 0,
     allowance: annualExemptAmount(label), taxableGain: 0, income: 0, incomeEvents: 0, flagged: 0,
   });
+  const MID_2425 = Date.parse('2024-10-30'); // CGT rates for shares changed 30 Oct 2024 (10/20 -> 18/24)
   for (const d of disposals) {
     const y = yr(d.taxYear);
     y.disposals += 1; y.proceeds += d.proceeds; y.allowableCost += d.allowableCost;
-    if (d.gain >= 0) y.gains += d.gain; else y.losses += -d.gain;
+    if (d.gain >= 0) { y.gains += d.gain; if (Date.parse(d.ts) < MID_2425) y.gainsPreOct30 = (y.gainsPreOct30 || 0) + d.gain; }
+    else y.losses += -d.gain;
     if (d.flags.length) y.flagged += 1;
   }
   for (const e of events) {
@@ -145,16 +147,27 @@ export function computeTax(events) {
   }
   for (const y of Object.values(years)) {
     y.netGain = y.gains - y.losses;
-    y.taxableGain = Math.max(0, y.netGain - y.allowance);
+    // HMRC rounding convention (capital-gains-calculator: round gains down, allowance up): taxpayer-favourable
+    y.taxableGain = Math.max(0, Math.floor(y.netGain) - y.allowance);
+    y.preOct30Share = y.gains > 0 ? Math.min(1, (y.gainsPreOct30 || 0) / y.gains) : 0;
   }
 
   disposals.sort(sortByTime);
   return { disposals, years, pools };
 }
 
-/** Indicative CGT at the post-30-Oct-2024 rates (18% basic, 24% higher). Earlier years: 10%/20%. */
-export function indicativeCgt(taxYear, taxableGain) {
+/**
+ * Indicative CGT. Rates verified against HMRC's own open-source calculator
+ * (hmrc/capital-gains-calculator, taxRatesAndBands.scala): shares/crypto 10%/20% up to
+ * 29 Oct 2024, 18%/24% from 30 Oct 2024 (the 2024/25 mid-year change), 18%/24% thereafter.
+ * For 2024/25, preOct30Share apportions the taxable gain across the two rate periods.
+ */
+export function indicativeCgt(taxYear, taxableGain, preOct30Share = 0) {
   const start = Number(taxYear.slice(0, 4));
-  const [lo, hi] = start >= 2025 ? [0.18, 0.24] : start === 2024 ? [0.18, 0.24] : [0.10, 0.20];
-  return { basic: taxableGain * lo, higher: taxableGain * hi, rates: [lo, hi] };
+  if (start < 2024) return { basic: taxableGain * 0.10, higher: taxableGain * 0.20, rates: [0.10, 0.20] };
+  if (start === 2024 && preOct30Share > 0) {
+    const pre = taxableGain * preOct30Share, post = taxableGain - pre;
+    return { basic: pre * 0.10 + post * 0.18, higher: pre * 0.20 + post * 0.24, rates: [0.18, 0.24], mixed: true };
+  }
+  return { basic: taxableGain * 0.18, higher: taxableGain * 0.24, rates: [0.18, 0.24] };
 }

@@ -40,7 +40,7 @@ function render() {
     <div class="card hmrc"><h3>What you'll need to explain when HMRC's data arrives</h3>
       <div>Since 1 January 2026, UK exchanges and custodial wallets have been recording your <strong>sales, swaps and transfers to private wallets</strong> under CARF. They file it to HMRC between January and May 2027, and HMRC matches it against your Self Assessment. That file only shows what the exchange saw. This tape shows what the public ledger says happened, including wallet-to-wallet and DeFi activity no exchange reports, so it is the version you will have to reconcile.</div>
       <ul>
-        ${yearList.map((y) => `<li><strong>${y.taxYear}</strong>: ${y.disposals} disposal${y.disposals === 1 ? '' : 's'} worth ${gbp(y.proceeds)}${y.taxableGain > 0 ? `, <span class="bad">${gbp(y.taxableGain)} taxable gain</span> (indicative CGT ${gbp(indicativeCgt(y.taxYear, y.taxableGain).basic)}–${gbp(indicativeCgt(y.taxYear, y.taxableGain).higher)})` : ', <span class="good">within the allowance</span>'}${y.income > 0 ? `, <span class="warn">${gbp(y.income)} income</span>` : ''}${y.proceeds > 50000 && y.taxableGain === 0 ? ' <span class="warn">— proceeds exceed £50,000, so you must still report on Self Assessment even with no tax due</span>' : ''}</li>`).join('')}
+        ${yearList.map((y) => `<li><strong>${y.taxYear}</strong>: ${y.disposals} disposal${y.disposals === 1 ? '' : 's'} worth ${gbp(y.proceeds)}${y.taxableGain > 0 ? `, <span class="bad">${gbp(y.taxableGain)} taxable gain</span> (indicative CGT ${gbp(indicativeCgt(y.taxYear, y.taxableGain, y.preOct30Share).basic)}–${gbp(indicativeCgt(y.taxYear, y.taxableGain, y.preOct30Share).higher)})` : ', <span class="good">within the allowance</span>'}${y.income > 0 ? `, <span class="warn">${gbp(y.income)} income</span>` : ''}${y.proceeds > 50000 && y.taxableGain === 0 ? ' <span class="warn">— proceeds exceed £50,000, so you must still report on Self Assessment even with no tax due</span>' : ''}</li>`).join('')}
         ${source.truncated ? '<li class="warn">History truncated for the demo: only the most recent ~300 transactions and token transfers were read.</li>' : ''}
       </ul>
     </div>
@@ -48,7 +48,7 @@ function render() {
       <div><button id="explainBtn" type="button" class="secondary">Explain my position</button> <button id="openReport" type="button">See the full report</button><span class="price">£29 per tax year when it launches</span></div></div>`;
 
   $('years').innerHTML = yearList.map((y) => {
-    const cgt = indicativeCgt(y.taxYear, y.taxableGain);
+    const cgt = indicativeCgt(y.taxYear, y.taxableGain, y.preOct30Share);
     return `<div class="card year"><h3>Tax year ${y.taxYear}</h3><table>
       <tr><td>Disposals</td><td>${y.disposals}</td></tr>
       <tr><td>Proceeds</td><td>${gbp2(y.proceeds)}</td></tr>
@@ -58,7 +58,7 @@ function render() {
       <tr><td>Net gain</td><td>${gbp2(y.netGain)}</td></tr>
       <tr><td>Annual exempt amount</td><td>${gbp2(y.allowance)}</td></tr>
       <tr class="total"><td>Taxable gain</td><td class="${y.taxableGain > 0 ? 'bad' : 'good'}">${gbp2(y.taxableGain)}</td></tr>
-      <tr><td>Indicative CGT (${Math.round(cgt.rates[0] * 100)}% / ${Math.round(cgt.rates[1] * 100)}%)</td><td>${gbp(cgt.basic)} – ${gbp(cgt.higher)}</td></tr>
+      <tr><td>Indicative CGT${cgt.mixed ? ' (blended: 10/20% pre-30 Oct 2024, 18/24% after)' : ` (${Math.round(cgt.rates[0] * 100)}% / ${Math.round(cgt.rates[1] * 100)}%)`}</td><td>${gbp(cgt.basic)} – ${gbp(cgt.higher)}</td></tr>
       <tr class="total"><td>Income (${y.incomeEvents})</td><td class="warn">${gbp2(y.income)}</td></tr>
       ${y.flagged ? `<tr><td>Items to review</td><td class="warn">${y.flagged}</td></tr>` : ''}
     </table></div>`;

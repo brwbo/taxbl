@@ -19,7 +19,7 @@ export function buildReport(events, sourceLabel) {
   const yearSections = yearList.map((y) => {
     const ds = disposals.filter((d) => d.taxYear === y.taxYear);
     const incomes = events.filter((e) => e.type === 'income' && yearOf(e.ts) === y.taxYear);
-    const cgt = indicativeCgt(y.taxYear, y.taxableGain);
+    const cgt = indicativeCgt(y.taxYear, y.taxableGain, y.preOct30Share);
     return `
     <section class="rp-year">
       <h2>Tax year ${y.taxYear} <span>6 April ${y.taxYear.slice(0, 4)} to 5 April ${Number(y.taxYear.slice(0, 4)) + 1}</span></h2>
@@ -34,7 +34,7 @@ export function buildReport(events, sourceLabel) {
           <tr><td>Net gain</td><td>${gbp2(y.netGain)}</td></tr>
           <tr><td>Annual exempt amount</td><td>${gbp2(y.allowance)}</td></tr>
           <tr class="rp-total"><td>Taxable gain</td><td>${gbp2(y.taxableGain)}</td></tr>
-          <tr><td>Indicative CGT at ${Math.round(cgt.rates[0] * 100)}% / ${Math.round(cgt.rates[1] * 100)}%</td><td>${gbp2(cgt.basic)} / ${gbp2(cgt.higher)}</td></tr>
+          <tr><td>Indicative CGT${cgt.mixed ? ' (blended across the 30 Oct 2024 rate change)' : ` at ${Math.round(cgt.rates[0] * 100)}% / ${Math.round(cgt.rates[1] * 100)}%`}</td><td>${gbp2(cgt.basic)} / ${gbp2(cgt.higher)}</td></tr>
         </table>
         <table class="rp-summary">
           <caption>Miscellaneous income from cryptoassets</caption>
